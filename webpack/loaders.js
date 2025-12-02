@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -8,8 +10,8 @@ const CSSLoader = {
     {
       loader: MiniCssExtractPlugin.loader,
       options: {
-        publicPath: './'
-      }
+        publicPath: '/assets/dist/'
+      },
     },
     {
       loader: 'css-loader',
@@ -23,8 +25,8 @@ const CSSLoader = {
         },
       },
     },
-    'sass-loader'
-  ]
+    'sass-loader',
+  ],
 };
 
 const JSLoader = {

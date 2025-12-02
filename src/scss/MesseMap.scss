@@ -1,18 +1,18 @@
-@import 'utils/fonts';
-@import 'utils/base';
-@import 'app/layout';
+@use 'utils/fonts';
+@use 'utils/base';
+@use 'app/layout';
 
 /* Map custom styles */
-@import 'styles/standard';
-@import 'styles/travel';
-@import 'styles/frame';
-@import 'styles/pure';
-@import 'styles/tone';
-@import 'styles/map';
-@import 'styles/window';
-@import 'styles/air';
-@import 'styles/hipster';
+@use 'styles/standard';
+@use 'styles/travel';
+@use 'styles/frame';
+@use 'styles/pure';
+@use 'styles/tone';
+@use 'styles/map';
+@use 'styles/window';
+@use 'styles/air';
+@use 'styles/hipster';
 
-@import 'app/modal';
-@import 'utils/leaflet';
-@import 'app/responsive';
+@use 'app/modal';
+@use 'utils/leaflet';
+@use 'app/responsive';
