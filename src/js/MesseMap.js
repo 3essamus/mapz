@@ -357,7 +357,7 @@ class MesseMap {
       document.getElementById('theme-editor').addEventListener('click', this._themeEditModal.bind(this));
       // Text modification events (color, style etc.)
       document.getElementById('toggle-texts').addEventListener('click', this._toggleCategory.bind(this));
-      document.getElementById('title-color').addEventListener('input', this._textColorEdit.bind(this));
+      document.getElementById('user-title-editor').addEventListener('click', this._textEditModal.bind(this));
       document.getElementById('subtitle-color').addEventListener('input', this._textColorEdit.bind(this));
       document.getElementById('comment-color').addEventListener('input', this._textColorEdit.bind(this));
       document.getElementById('user-title').addEventListener('input', this._applyTexts.bind(this));
@@ -1450,6 +1450,35 @@ class MesseMap {
   // ======================================================================= //
   // --------------------------- Modal methods ----------------------------- //
   // ======================================================================= //
+
+  /**
+   * @method
+   * @name _textEditModal
+   * @private
+   * @memberof MesseMap
+   * @author Arthur Beaulieu
+   * @since January 2025
+   * @description
+   * <blockquote>
+   * This method will build the text edit modal into the user interface.
+   * </blockquote>
+   * @param {Event} e - The click event that triggered the modal
+   **/
+  _textEditModal(e) {
+    if (CONST.DEBUG) { console.log('MesseMap._textEditModal() called with ', e); }
+    e.preventDefault();
+    this._fetchModal('textedit').then(dom => {
+      // Modal start animation (close animation handled in _closeModal())
+      document.getElementById('modal-overlay').appendChild(dom);
+      document.getElementById('modal-overlay').style.display = 'flex';
+      setTimeout(() => document.getElementById('modal-overlay').style.opacity = 1, 50);
+      requestAnimationFrame(() => {
+        document.getElementById('color').addEventListener('input', this._textColorEdit.bind(this));
+        this.replaceString(document.getElementById('modal-overlay'), '{{MODAL_TITLE}}', this._nls.text.modalEditTitle);
+        this.replaceString(document.getElementById('modal-overlay'), '{{MODAL_CLOSE}}', this._nls.action.close);
+      });
+    });
+  }
 
 
   /**

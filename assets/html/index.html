@@ -103,17 +103,19 @@
             <label for="user-title">{{MAP_TITLE}}</label>
             <div class="input-with-color">
               <input id="user-title" type="text" value="Messe Basse" placeholder="{{MAP_TITLE_PLACEHOLDER}}" maxlength="32">
-              <input type="color" id="title-color" aria-label='Title color' class="text-edit" data-type="title">
+              <div id="user-title-editor" class="text-edit">
+                <img src="/assets/img/icon/option.svg" height="14" width="14" alt="user-title-editor-option">
+              </div>
             </div>
             <label for="user-subtitle">{{MAP_SUBTITLE}}</label>
             <div class="input-with-color">
               <input id="user-subtitle" type="text" value="France" placeholder="{{MAP_SUBTITLE_PLACEHOLDER}}" maxlength="32">
-              <input type="color" id="subtitle-color" aria-label='Subtitle color' class="text-edit" data-type="subtitle">
+              <input type="color" id="subtitle-color" aria-label='Subtitle color' class="color-edit" data-type="subtitle">
             </div>
             <label for="user-comment">{{MAP_COMMENT}}</label>
             <div class="input-with-color">
               <input id="user-comment" type="text" value="44.797°N / 1.542°E" placeholder="{{MAP_COMMENT_PLACEHOLDER}}" maxlength="42">
-              <input type="color" id="comment-color" aria-label='Comment color' class="text-edit" data-type="comment">
+              <input type="color" id="comment-color" aria-label='Comment color' class="color-edit" data-type="comment">
             </div>
             <div class="toggle-icon-wrapper">
               <label for="lock-comment-coordinates">{{LOCK_COMMENT_COORD}}</label>

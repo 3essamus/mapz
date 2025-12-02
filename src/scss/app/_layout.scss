@@ -185,6 +185,7 @@ aside {
         margin: .5rem 0;
         margin-bottom: 1rem;
         padding: 0 1rem;
+        position: relative;
         width: 100%;
 
         &:last-of-type {
@@ -204,6 +205,7 @@ aside {
         }
 
         .text-edit {
+          align-items: center;
           aspect-ratio: 1 / 1;
           background-color: transparent;
           border: solid 1px;
@@ -212,7 +214,9 @@ aside {
           border-top-right-radius: .3rem;
           border-bottom-right-radius: .3rem;
           cursor: pointer;
+          display: flex;
           height: 100%;
+          justify-content: center;
           padding: .2rem;
           width: 2.5rem;
         }
