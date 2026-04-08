@@ -2,16 +2,16 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Header } from "@/components/header";
+import { useState } from "react";
 import { useStore } from "@/lib/store";
 
-const MapSelector = dynamic(
-  () => import("@/components/map-selector").then((mod) => mod.MapSelector),
+const PosterMap = dynamic(
+  () => import("@/components/poster-map").then((mod) => mod.PosterMap),
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-[400px] lg:h-[500px] bg-secondary rounded-xl flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
+      <div className="map-container standard-style vertical">
+        <div className="map-area flex items-center justify-center bg-muted">
           <svg className="animate-spin w-8 h-8 text-primary" viewBox="0 0 24 24" fill="none">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
             <path
@@ -20,144 +20,241 @@ const MapSelector = dynamic(
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-          <span className="text-muted-foreground">جاري تحميل الخريطة...</span>
+        </div>
+        <div className="user-text-wrapper">
+          <h1>مابز</h1>
+          <h2>
+            <span className="line-before"></span>
+            <span className="subtitle-text">اختر موقعك</span>
+            <span className="line-after"></span>
+          </h2>
+          <p>44.797°N / 1.542°E</p>
         </div>
       </div>
     ),
   }
 );
 
+const MAP_LAYERS = [
+  "OpenStreetMap",
+  "Imagery (E)",
+  "Voyager (C)",
+  "Positron (C)",
+  "Dark Matter (C)",
+  "Toner (S)",
+  "Watercolor (S)",
+];
+
+const MAP_STYLES = [
+  { id: "standard", label: "قياسي" },
+  { id: "travel", label: "سفر" },
+  { id: "frame", label: "إطار" },
+  { id: "pure", label: "نقي" },
+];
+
 export default function HomePage() {
   const selectedLocation = useStore((state) => state.selectedLocation);
+  
+  // Map settings state (matching original MesseMap)
+  const [orientation, setOrientation] = useState<"vertical" | "horizontal">("vertical");
+  const [selectedLayer, setSelectedLayer] = useState("Imagery (E)");
+  const [darkTheme, setDarkTheme] = useState(false);
+  const [textOnTop, setTextOnTop] = useState(false);
+  const [title, setTitle] = useState("مابز");
+  const [subtitle, setSubtitle] = useState("اختر موقعك");
+  const [expandedSections, setExpandedSections] = useState({
+    style: true,
+    text: true,
+    export: true,
+  });
+
+  const toggleSection = (section: keyof typeof expandedSections) => {
+    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }));
+  };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Hero Section */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-3 text-balance">
-            اختر موقع التوصيل
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto text-pretty">
-            حدد موقعك على الخريطة أو استخدم موقعك الحالي لنوصل طلبك بدقة
+    <div className="app-wrapper">
+      {/* Sidebar - matching original MesseMap */}
+      <aside className="sidebar">
+        <header>
+          <h1>مابز</h1>
+        </header>
+        
+        <hr />
+        
+        <section className="sidebar-content">
+          <p className="sidebar-helper">
+            تصفح الخريطة، اختر موقعك، ثم أكمل طلبك!
           </p>
-        </div>
 
-        {/* Instructions */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className="card p-4 flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-primary font-bold text-lg">1</span>
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground">حدد الموقع</h3>
-              <p className="text-sm text-muted-foreground">انقر على الخريطة أو استخدم GPS</p>
-            </div>
+          {/* Style Section */}
+          <div 
+            className="category-title"
+            onClick={() => toggleSection("style")}
+          >
+            <span>النمط</span>
+            <span>{expandedSections.style ? "▲" : "▼"}</span>
           </div>
           
-          <div className="card p-4 flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-primary font-bold text-lg">2</span>
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground">أدخل بياناتك</h3>
-              <p className="text-sm text-muted-foreground">الاسم ورقم الهاتف</p>
-            </div>
-          </div>
-          
-          <div className="card p-4 flex items-center gap-4">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-primary font-bold text-lg">3</span>
-            </div>
-            <div>
-              <h3 className="font-semibold text-foreground">استلم واستلم</h3>
-              <p className="text-sm text-muted-foreground">الدفع عند الاستلام</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Map Section */}
-        <div className="card p-4 sm:p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-foreground">الخريطة</h2>
-            {selectedLocation && (
-              <span className="text-sm text-success flex items-center gap-1">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                تم التحديد
-              </span>
-            )}
-          </div>
-          <MapSelector />
-        </div>
-
-        {/* CTA Section */}
-        <div className="card p-6 bg-accent/50 border-primary/20">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-semibold text-foreground mb-1">
-                {selectedLocation ? "جاهز للمتابعة؟" : "حدد موقعك أولاً"}
-              </h3>
-              <p className="text-muted-foreground text-sm">
-                {selectedLocation
-                  ? "اضغط على الزر للمتابعة وإدخال بيانات التوصيل"
-                  : "انقر على الخريطة لتحديد موقع التوصيل"}
-              </p>
-            </div>
-            <Link
-              href="/checkout"
-              className={`btn-primary whitespace-nowrap flex items-center gap-2 ${
-                !selectedLocation ? "opacity-50 pointer-events-none" : ""
-              }`}
-              aria-disabled={!selectedLocation}
-            >
-              <span>متابعة الطلب</span>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 rotate-180">
-                <path
-                  fillRule="evenodd"
-                  d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-border mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-5 h-5 text-primary-foreground"
+          {expandedSections.style && (
+            <div className="category-content">
+              {/* Orientation */}
+              <label className="block text-sm text-muted-foreground mb-2 italic">اتجاه الخريطة</label>
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span 
+                  className={`click-item ${orientation === "vertical" ? "selected" : ""}`}
+                  onClick={() => setOrientation("vertical")}
                 >
-                  <path
-                    fillRule="evenodd"
-                    d="m11.54 22.351.07.04.028.016a.76.76 0 0 0 .723 0l.028-.015.071-.041a16.975 16.975 0 0 0 1.144-.742 19.58 19.58 0 0 0 2.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 0 0-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 0 0 2.682 2.282 16.975 16.975 0 0 0 1.145.742ZM12 13.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+                  عمودي
+                </span>
+                <span 
+                  className={`click-item ${orientation === "horizontal" ? "selected" : ""}`}
+                  onClick={() => setOrientation("horizontal")}
+                >
+                  أفقي
+                </span>
               </div>
-              <span className="font-semibold text-foreground">مابز</span>
+
+              {/* Map Layer */}
+              <label className="block text-sm text-muted-foreground mb-2 italic">طبقة الخريطة</label>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {MAP_LAYERS.map((layer) => (
+                  <span
+                    key={layer}
+                    className={`click-item ${selectedLayer === layer ? "selected" : ""}`}
+                    onClick={() => setSelectedLayer(layer)}
+                  >
+                    {layer}
+                  </span>
+                ))}
+              </div>
+
+              {/* Dark Theme Toggle */}
+              <div className="flex justify-between items-center mb-3">
+                <label className="text-sm">المظهر الداكن</label>
+                <input 
+                  type="checkbox" 
+                  className="switch-toggle"
+                  checked={darkTheme}
+                  onChange={(e) => setDarkTheme(e.target.checked)}
+                />
+              </div>
+
+              {/* Text Position Toggle */}
+              <div className="flex justify-between items-center mb-4">
+                <label className="text-sm">النص في الأعلى</label>
+                <input 
+                  type="checkbox" 
+                  className="switch-toggle"
+                  checked={textOnTop}
+                  onChange={(e) => setTextOnTop(e.target.checked)}
+                />
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">
-              جميع الحقوق محفوظة © {new Date().getFullYear()}
-            </p>
+          )}
+
+          {/* Text Section */}
+          <div 
+            className="category-title"
+            onClick={() => toggleSection("text")}
+          >
+            <span>النص</span>
+            <span>{expandedSections.text ? "▲" : "▼"}</span>
           </div>
-        </div>
-      </footer>
+          
+          {expandedSections.text && (
+            <div className="category-content">
+              {/* Title Input */}
+              <label className="block text-sm text-muted-foreground mb-2 italic">العنوان</label>
+              <input 
+                type="text"
+                className="sidebar-input mb-4"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="أدخل العنوان"
+                maxLength={32}
+              />
+
+              {/* Subtitle Input */}
+              <label className="block text-sm text-muted-foreground mb-2 italic">العنوان الفرعي</label>
+              <input 
+                type="text"
+                className="sidebar-input mb-4"
+                value={subtitle}
+                onChange={(e) => setSubtitle(e.target.value)}
+                placeholder="أدخل العنوان الفرعي"
+                maxLength={32}
+              />
+
+              {/* Location Info */}
+              {selectedLocation && (
+                <div className="bg-success/20 border border-success/30 rounded-lg p-3 mb-4">
+                  <p className="text-xs text-success mb-1">تم تحديد الموقع</p>
+                  <p className="text-sm line-clamp-2">{selectedLocation.address}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Export / Action Section */}
+          <div 
+            className="category-title"
+            onClick={() => toggleSection("export")}
+          >
+            <span>الطلب</span>
+            <span>{expandedSections.export ? "▲" : "▼"}</span>
+          </div>
+          
+          {expandedSections.export && (
+            <div className="category-content">
+              <p className="text-sm text-muted-foreground mb-4">
+                {selectedLocation 
+                  ? "موقعك جاهز! اضغط على الزر أدناه للمتابعة وإدخال بيانات التوصيل."
+                  : "انقر على الخريطة لتحديد موقع التوصيل، ثم أكمل طلبك."}
+              </p>
+              
+              {/* Order Summary */}
+              <div className="bg-white/10 rounded-lg p-3 mb-4">
+                <div className="flex justify-between text-sm mb-2">
+                  <span>الموقع</span>
+                  <span className={selectedLocation ? "text-success" : "text-destructive"}>
+                    {selectedLocation ? "محدد" : "غير محدد"}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>طريقة الدفع</span>
+                  <span>عند الاستلام</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+
+        <hr />
+
+        <footer className="sidebar-footer">
+          <Link href={selectedLocation ? "/checkout" : "#"}>
+            <button disabled={!selectedLocation}>
+              متابعة الطلب
+            </button>
+          </Link>
+          <p className="credit-link">
+            2024 / {new Date().getFullYear()} – مابز
+          </p>
+        </footer>
+      </aside>
+
+      {/* Main Map Area */}
+      <main className="main-area">
+        <PosterMap
+          selectedLayer={selectedLayer}
+          title={title}
+          subtitle={subtitle}
+          darkTheme={darkTheme}
+          textOnTop={textOnTop}
+          orientation={orientation}
+        />
+      </main>
     </div>
   );
 }

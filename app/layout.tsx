@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f59e0b",
+  themeColor: "#56d45b",
   width: "device-width",
   initialScale: 1,
 };
@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={`${cairo.variable} font-sans`}>
+      <body className={`${cairo.variable} font-sans h-full w-full`}>
         {children}
       </body>
     </html>

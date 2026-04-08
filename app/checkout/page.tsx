@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useStore } from "@/lib/store";
-import { Header } from "@/components/header";
 import { CheckoutForm } from "@/components/checkout-form";
 
 export default function CheckoutPage() {
@@ -10,7 +9,25 @@ export default function CheckoutPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      {/* Simple Header */}
+      <header className="bg-sidebar text-sidebar-foreground py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <Link href="/" className="text-xl font-bold hover:text-primary transition-colors">
+              مابز
+            </Link>
+            <Link 
+              href="/" 
+              className="flex items-center gap-2 text-sm hover:text-primary transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                <path fillRule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clipRule="evenodd" />
+              </svg>
+              <span>العودة للخريطة</span>
+            </Link>
+          </div>
+        </div>
+      </header>
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Breadcrumb */}
